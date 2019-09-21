@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block body_block %}
+    <script>
+        var selected = []
+        var totalPrice = 0
+    </script>
+    <h1>Select your food!</h1>
+    <div class="container-fluid" style="min-height: 100%;">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="row">
+                        {% for item in items %}
+                            <div class="col-sm-4 px-md-1 py-md-1">
+                                <div id="card{{forloop.counter}}" class="card bg-light" style="width: 100%;" onclick="itemSelect('card{{forloop.counter}}', '{{item.itemName}}', '{{item.itemPrice}}');">
+                                    <img src="{{ item.itemImage.url }}" class="card-img-top" alt="...">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{item.itemName}}</h5>
+                                        <p class="card-text">{{item.itemInfo}}</p>
+                                        <p class="card-text">{{item.itemPrice}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div>
+                    <ul id="selectedList" class="list-group">
+
+                    </ul>
+                    <div>
+                        <h3>Total Price</h3>
+                        <h4 id="totalPrice">{{totalPrice}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        function itemSelect(id, itemName, itemPrice) {
+            itemPrice = itemPrice*1
+            var ul = document.getElementById("selectedList");
+            if ( document.getElementById(id).classList.contains('bg-light') ){
+                alert(itemName + " Item selected");
+                document.getElementById(id).classList.add('bg-success');
+                document.getElementById(id).classList.remove('bg-light');
+                selected.push([id, itemName, itemPrice])
+
+                var li = document.createElement("li");
+                li.setAttribute("id", "selected"+id);
+                li.setAttribute("class", "list-item" );
+                li.appendChild(document.createTextNode(itemName + " " + itemPrice + "won"));
+                ul.appendChild(li);
+                totalPrice += itemPrice
+
+            }else if ( document.getElementById(id).classList.contains('bg-success') ){
+                alert(itemName + " Item selected canceled");
+                document.getElementById(id).classList.add('bg-light');
+                document.getElementById(id).classList.remove('bg-success');
+                
+                for(var i=0; i<selected.length;i++){
+                    if(selected[i][0]==id){
+                        selected.pop(i)
+                        break
+                    }
+                }
+                document.getElementById("selected"+id).remove();
+                totalPrice -= itemPrice
+            }
+            console.log(selected)
+            document.getElementById("totalPrice").innerHTML = totalPrice + ' won';
+
+        }
+    </script>
+{% endblock %}
